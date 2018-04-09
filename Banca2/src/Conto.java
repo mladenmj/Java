@@ -1,5 +1,5 @@
 public interface Conto {
-
-
-    void operazione(double amount);
+    boolean operazione(double amount);
+    double getSaldo();
+    String getIban();
 }
