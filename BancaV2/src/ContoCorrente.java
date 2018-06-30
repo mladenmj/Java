@@ -1,11 +1,6 @@
 public class ContoCorrente extends abstractConto {
 
-    @Override
-    public boolean operazione(double amount) {
-        if (amount > 0 || -amount < super.getSaldo()) {
-            return true;
-        }
-
-        return false;
+    public ContoCorrente(String Iban, String CF, double saldo) {
+        super(Iban, CF, 0.0);
     }
 }
