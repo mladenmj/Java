@@ -1,3 +1,5 @@
+package Banca.Conti;
+
 public class ContoWeb extends abstractConto {
     private boolean loggedIn;
     private String password;

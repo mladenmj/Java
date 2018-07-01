@@ -1,12 +1,22 @@
+package Banca.Conti;
+
+import Banca.Accountable;
+import Banca.Conto;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class abstractConto implements Conto {
     private String Iban;
     private String CF;
     private double saldo;
+    protected List<Accountable> accountables;
 
     public abstractConto(String iban, String CF, double saldo) {
         this.CF = CF;
         this.Iban = iban;
         this.saldo = saldo;
+        this.accountables = new ArrayList<>();
     }
 
     @Override
@@ -16,13 +26,31 @@ public abstract class abstractConto implements Conto {
             return true;
         }
         else {
-            if (-amount <= saldo) {
-                saldo += amount;
+            amount = Math.abs(amount);
+            if (amount <= saldo) {
+                this.saldo -= amount;
                 return true;
             } else {
                 return false;
             }
         }
+    }
+
+    @Override
+    public boolean addAccountable(Accountable acc) {
+        return accountables.add(acc);
+    }
+
+    public boolean fineMese() {
+        for (Accountable acc : accountables) {
+            double importo = acc.getImporto();
+            boolean esito = operazione(importo);
+
+            if (!esito) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
