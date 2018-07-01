@@ -1,6 +1,10 @@
 package Banca;
 
 import Banca.Conti.*;
+import Banca.Exceptions.IncorrectPasswordException;
+import Banca.Exceptions.InvalidIbanException;
+import Banca.Exceptions.InvalidOperationException;
+import Banca.Exceptions.NotLoggedinException;
 
 import java.util.*;
 
@@ -32,13 +36,24 @@ public class Banca {
     }
 
     public boolean operazione(String Iban, double amount) {
-        Conto c = accounts.get(Iban);
-        return c.operazione(amount);
+        Conto c = null;
+
+        try {
+            c = getConto(Iban);
+            return c.operazione(amount);
+        } catch (InvalidOperationException | InvalidIbanException | NotLoggedinException e) {
+            System.err.println("Conto " + Iban + ": " + e.getMessage());
+        }
+
+        return false;
     }
 
-    public void getSaldo(String Iban) {
-        Conto c = accounts.get(Iban);
-        System.out.println(c.getSaldo());
+    private Conto getConto(String iban) {
+        if (accounts.containsKey(iban)) {
+            return accounts.get(iban);
+        } else {
+            throw new InvalidIbanException(iban + " not valid");
+        }
     }
 
     private String generateIban() {
@@ -58,13 +73,22 @@ public class Banca {
 
     public boolean logIn(String Iban, String password) {
         boolean result = false;
-        Conto c = accounts.get(Iban);
+        Conto c = null;
 
-        if(c instanceof ContoWeb) {
-            result = ((ContoWeb) c).login(password);
+        try {
+            c = getConto(Iban);
+
+            if(c instanceof ContoWeb) {
+                result = ((ContoWeb) c).login(password);
+            }
+            return result;
+        } catch (InvalidIbanException | InvalidOperationException e) {
+            System.err.println("Conto " + Iban + ": " + e.getMessage());
+        } catch (IncorrectPasswordException e) {
+            System.err.println("Password non corretta: " + e.getMessage());
         }
 
-        return result;
+        return false;
     }
 
     public void fineMese() {
@@ -74,9 +98,16 @@ public class Banca {
     }
 
     public boolean addAccountable(String Iban, Accountable accountable) {
-        Conto c = accounts.get(Iban);
+        Conto c = null;
 
-        return c.addAccountable(accountable);
+        try {
+            c = getConto(Iban);
+            return c.addAccountable(accountable);
+        } catch (InvalidIbanException | InvalidOperationException e) {
+            System.err.println("Conto " + Iban + ": " + e.getMessage());
+        }
+
+        return true;
     }
 
     public String toString() {

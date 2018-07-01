@@ -1,5 +1,9 @@
 package Banca.Conti;
 
+import Banca.Exceptions.IncorrectPasswordException;
+import Banca.Exceptions.InvalidOperationException;
+import Banca.Exceptions.NotLoggedinException;
+
 public class ContoWeb extends abstractConto {
     private boolean loggedIn;
     private String password;
@@ -13,29 +17,42 @@ public class ContoWeb extends abstractConto {
     }
 
     public boolean login(String password) {
-        if(password.equals(this.password) && !firstlogin) {
-            loggedIn = true;
-            firstlogin = false;
-        } else
-            this.loggedIn = false;
+        this.loggedIn = false;
 
-        return this.loggedIn;
+        if (password.equals(this.password)) {
+            if(!firstlogin) {
+                this.loggedIn = true;
+                this.firstlogin = false;
+            } else {
+                throw new InvalidOperationException("please change the default password");
+            }
+        } else {
+            throw new IncorrectPasswordException();
+        }
+
+        return loggedIn;
     }
 
     public boolean setPassword(String oldPass, String newPass) {
-        if (firstlogin && oldPass.equals(this.password)) {
-            this.password = newPass;
-            this.firstlogin = false;
-            this.loggedIn = false;
-            return true;
-        } else
-            return false;
+        try {
+            if (firstlogin && oldPass.equals(this.password)) {
+                this.password = newPass;
+                this.firstlogin = false;
+                this.loggedIn = false;
+                return true;
+            } else
+                throw new InvalidOperationException("Conto " + this.getIban() + ": password change not allowed ");
+        } catch (InvalidOperationException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return false;
     }
 
     @Override
     public boolean operazione(double amount) {
         if (!loggedIn)
-            return false;
+            throw new NotLoggedinException();
         else
             return super.operazione(amount);
     }

@@ -1,6 +1,7 @@
 package Banca.Conti;
 
 import Banca.Accountable;
+import Banca.Exceptions.InvalidOperationException;
 import Banca.accountable.AccountableType;
 
 public class ContoDeposito extends abstractConto {
@@ -14,14 +15,15 @@ public class ContoDeposito extends abstractConto {
         if(amount > 0) {
             return super.operazione(amount);
         } else
-            return false;
+            throw new InvalidOperationException();
     }
 
     @Override
     public boolean addAccountable(Accountable acc) {
-        if (acc.getType() == AccountableType.ACCREDITO)
-            return accountables.add(acc);
+        if (acc.getType() == AccountableType.ADDEBITO)
+            throw new InvalidOperationException("Accountable not allowed for this account.");
         else
-            return false;
+            super.addAccountable(acc);
+        return true;
     }
 }
