@@ -1,5 +1,3 @@
-import java.awt.*;
-
 public class inkJetPrinter {
     private final int MAXLEVEL;
     private int[] cartridge;
