@@ -1,0 +1,28 @@
+package soluzioneAbitativa;
+
+public class Studio extends Camere {
+    public Studio(String id, int m2, int nMaxPers) {
+        super(id, m2, nMaxPers);
+    }
+
+    @Override
+    public int calcoloCosto() {
+        int costoVar = super.m2 * 10;
+
+        return super.costoFisso + costoVar;
+    }
+
+    @Override
+    public String toString() {
+        String disp = "";
+
+        if (super.isAvailable()) {
+            disp += "disponibile";
+        }
+        else {
+            disp += "non disponibile";
+        }
+
+        return super.toString() + this.getId() + " " + disp;
+    }
+}
